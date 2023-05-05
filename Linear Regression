@@ -1,0 +1,72 @@
+function [fX, fY, slope, intercept, Rsquared] = linearRegression(x,y)
+%linearRegression Computes the linear regression of a data set
+%   Compute the linear regression based on inputs:
+%     1. x: x-values for our data set
+%     2. y: y-values for our data set
+%
+%   Outputs:
+%     1. fX: x-values with outliers removed
+%     2. fY: y-values with outliers removed
+%     3. slope: slope from the linear regression y=mx+b
+%     4. intercept: intercept from the linear regression y=mx+b
+%     5. Rsquared: R^2, a.k.a. coefficient of determination
+   if length(x)~=length(y)
+       error('make sure x and y arrays are the same size')
+   end 
+   %sorting x and y values 
+   [sortedY, sortOrder]=sort(y);
+   sortedX=x(sortOrder);
+   y=sortedY
+   x=sortedX
+   
+   %taking out outliers 
+   n=length(x);
+   Q1=floor((n+1)/4);
+   Q3=floor((6*n+3)/4);
+   IQR=Q3-Q1;
+   
+   threshold =1.5*IQR;
+   fY=y(~(y < (Q1 - threshold)| y > (Q3 + threshold)))
+   fX=x(~(y < (Q1 - threshold)| y > (Q3 + threshold))) 
+   %linear regression 
+   meanY=mean(fY)
+   meanX=mean(fX)
+   xSum=sum(fX)
+   ySum=sum(fY)
+   n=length(fX)
+   for i=1:n
+       xy(i)=fX(i).*fY(i)
+       x2(i)=fX(i).^2
+   end
+   xySum=sum(xy)
+   x2Sum=sum(x2)
+   slope=(n*(xySum)-(xSum*ySum))/((n*x2Sum)-xSum^2)
+   intercept=meanY-slope.*meanX
+   line=slope.*fX+intercept 
+    
+   %calculate Rsquared 
+   SStot=sum((fY-meanY).^2);
+   SSres=sum((fY-line).^2);
+   Rsquared=1-(SSres/SStot);
+
+end
+
+%calling function
+x = [1 2 3 4 5 6]
+y = [1 2 1.3 3.75 2.5 100]
+% We should filter out x=6,y=100!
+[fX, fY, slope, intercept, Rsquared] = linearRegression(x,y)
+
+% Actual values for your comparison:
+xAnswer = [1 3 2 5 4]
+yAnswer = [1 1.3 2 2.5 3.75]
+slopeAnswer = 0.4750
+interceptAnswer = 0.6850
+RsquaredAnswer = 0.4758
+
+% Will show a 1 if your result is within 1.e-12 of the answer.
+fprintf("fX is close to xAnswer? %d\n", abs(fX-xAnswer)<1.e-12) % Since fX is an array, will print one line per element.
+fprintf("fY is close to yAnswer? %d\n", abs(fY-yAnswer)<1.e-12) % Since fY is an array, will print one line per element.
+fprintf("slope is close to slopeAnswer? %d\n", abs(slope-slopeAnswer)<1.e-12)
+fprintf("intercept is close to interceptAnswer? %d\n", abs(intercept-interceptAnswer)<1.e-12)
+fprintf("Rsquared is close to RsquaredAnswer? %d\n", abs(Rsquared-RsquaredAnswer)<1.e-12)
