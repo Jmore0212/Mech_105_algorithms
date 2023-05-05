@@ -1,0 +1,37 @@
+function [A] = specialMatrix(n,m)
+% This function should return a matrix A as described in the problem statement
+% Inputs n is the number of rows, and m the number of columns
+% It is recomended to first create the matrxix A of the correct size, filling it with zeros to start with is not a bad choice
+switch nargin
+    case 0
+        error ('Please enter the number of rows and columns')
+    case 1 
+        error ('Please enter the number of columns')
+
+end
+ A = zeros (n,m)
+[numRows, numcolumns]=size(A) 
+g=1:numRows 
+h=1:numcolumns
+ for g=1:numRows;
+     A(g,1)=g
+ end
+ for h=1:numcolumns
+     A(1,h)=h
+ end
+ for g=1: numRows
+     for h=1: numcolumns
+         if g>1 && h>1
+             A(g, h)=(A(g,(h-1))+A((g- 1),h))
+         end
+     end
+% Now the real challenge is to fill in the correct values of A
+
+end
+% Things beyond here are outside of your function
+% Here is a test call of your fuction. Feel free to play around with testing in here and change anything you like
+% The grading tests are not impacted by code in this section, and may test different cases than are given in the example here.
+%   If you want to use this in matlab directly (i.e. not online), you must save your function as a file specialMatrix.m
+%   and then can save this script as anything you like, say specialMatrixTest.m for example.
+n = 4; m = 5;
+specialMatrix(n,m)
